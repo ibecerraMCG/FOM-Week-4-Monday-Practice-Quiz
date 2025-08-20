@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Week 4 Monday Practice Quiz</title>
+    <style>
+        /* --- Color Variables --- */
+        :root {
+            /* Default: Dark Theme */
+            --bg-color: #2d343e; /* Dark background */
+            --container-bg: #3c424f; /* Slightly lighter container */
+            --text-color: #e8e6e3; /* Light text */
+            --question-text-color: #8ab4f8; /* Light blue for questions */
+            --lo-text-color: #b0c4de; /* Lighter blue for learning objective */
+            --border-color: #555; /* Darker borders */
+            --separator-color: #4a4f5a;
+            --label-bg: #454c5a;
+            --label-border: #6c757d;
+            --label-hover-bg: #525966;
+            --label-hover-border: #7a828a;
+            --button-bg: #8ab4f8;
+            --button-text: #202124;
+            --button-hover-bg: #a3c5f9;
+            --button-disabled-bg: #5f6368;
+            --feedback-correct-bg: #344e41;
+            --feedback-correct-text: #c7f9cc;
+            --feedback-correct-border: #52b788;
+            --feedback-incorrect-bg: #5e2129;
+            --feedback-incorrect-text: #f8d7da;
+            --feedback-incorrect-border: #a4133c;
+            --feedback-rationale-text: #adb5bd; /* Lighter gray for rationale */
+            --feedback-source-text: #c7d3e0;
+            --feedback-separator: #6c757d;
+            --radio-accent: #8ab4f8;
+        }
+
+        .light-theme {
+            --bg-color: #eef2f7;
+            --container-bg: #ffffff;
+            --text-color: #343a40;
+            --question-text-color: #0056b3;
+            --lo-text-color: #5a6e8a;
+            --border-color: #dee2e6;
+            --separator-color: #e9ecef;
+            --label-bg: #f8f9fa;
+            --label-border: #ced4da;
+            --label-hover-bg: #e2e6ea;
+            --label-hover-border: #adb5bd;
+            --button-bg: #007bff;
+            --button-text: white;
+            --button-hover-bg: #0056b3;
+            --button-disabled-bg: #6c757d;
+            --feedback-correct-bg: #d1e7dd;
+            --feedback-correct-text: #0f5132;
+            --feedback-correct-border: #badbcc;
+            --feedback-incorrect-bg: #f8d7da;
+            --feedback-incorrect-text: #842029;
+            --feedback-incorrect-border: #f5c2c7;
+            --feedback-rationale-text: #495057;
+            --feedback-source-text: #343a40;
+            --feedback-separator: #ccc;
+            --radio-accent: #007bff;
+        }
+
+        /* --- General Styles --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            line-height: 1.7;
+            margin: 0;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding-bottom: 40px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #theme-toggle-button {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            padding: 8px 12px;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+            border: 1px solid var(--label-border);
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9em;
+            z-index: 1000;
+             transition: background-color 0.3s, color 0.3s;
+        }
+         #theme-toggle-button:hover {
+             opacity: 0.8;
+         }
+
+
+        #quiz-container {
+            max-width: 900px;
+            margin: 80px auto 30px auto;
+            background: var(--container-bg);
+            padding: 25px 35px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid var(--border-color);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .question-block {
+            margin-bottom: 35px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid var(--separator-color);
+            transition: border-color 0.3s;
+        }
+
+        .question-block:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 5px;
+        }
+        
+        .learning-objective {
+            font-size: 0.85em;
+            font-style: italic;
+            color: var(--lo-text-color);
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed var(--separator-color);
+        }
+
+        .question-text {
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 18px;
+            color: var(--question-text-color);
+            transition: color 0.3s;
+        }
+
+        .options label {
+            display: block;
+            margin-bottom: 12px;
+            cursor: pointer;
+            padding: 10px 15px;
+            border-radius: 6px;
+            border: 1px solid var(--label-border);
+            background-color: var(--label-bg);
+            transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+
+        .options label:hover {
+            background-color: var(--label-hover-bg);
+            border-color: var(--label-hover-border);
+        }
+
+        .options input[type="radio"]:checked+span {
+             font-weight: bold;
+             color: var(--question-text-color);
+        }
+        .options input[type="radio"] {
+            margin-right: 12px;
+            accent-color: var(--radio-accent);
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .check-button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: background-color 0.2s, color 0.2s, opacity 0.2s;
+            background-color: var(--button-bg);
+            color: var(--button-text);
+        }
+
+        .check-button:hover {
+            opacity: 0.85;
+        }
+
+         .check-button:disabled {
+             background-color: var(--button-disabled-bg);
+             cursor: not-allowed;
+             opacity: 0.7;
+         }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-size: 0.95em;
+            display: none;
+            border: 1px solid transparent;
+            transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+        }
+
+        .feedback.correct {
+            background-color: var(--feedback-correct-bg);
+            color: var(--feedback-correct-text);
+            border-color: var(--feedback-correct-border);
+            display: block;
+        }
+
+        .feedback.incorrect {
+            background-color: var(--feedback-incorrect-bg);
+            color: var(--feedback-incorrect-text);
+            border-color: var(--feedback-incorrect-border);
+            display: block;
+        }
+
+        .feedback-status {
+             font-weight: bold;
+             font-size: 1.1em;
+             display: block;
+             margin-bottom: 8px;
+        }
+
+        .feedback-rationale {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px dashed var(--feedback-separator);
+            font-size: 0.9em;
+            color: var(--feedback-rationale-text);
+            transition: color 0.3s, border-color 0.3s;
+        }
+        
+        .feedback-source {
+            margin-top: 10px;
+            font-size: 0.85em;
+            font-style: italic;
+            color: var(--feedback-source-text);
+            background-color: rgba(0,0,0,0.1);
+            padding: 8px;
+            border-radius: 4px;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--question-text-color);
+            margin-top: 30px;
+            margin-bottom: 30px;
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+    </style>
+</head>
+<body>
+
+    <button id="theme-toggle-button">Toggle Theme</button>
+    <h1>Week 4 Monday Practice Quiz</h1>
+
+    <div id="quiz-container">
+        <!-- Questions will be loaded here by JavaScript -->
+    </div>
+
+    <script>
+        const quizData = [
+            // Nucleic Acids Questions
+            {
+                learningObjective: "LO 1 (Nucleic Acids): Explain the process of denaturation and renaturation (annealing) of nucleic acids and its use in laboratory techniques.",
+                question: "A researcher is designing a DNA probe to detect a specific gene sequence. To ensure that the probe binds only to its exact target sequence and not to closely related genes, the hybridization experiment should be conducted under conditions of high stringency. Which of the following conditions would create the highest stringency?",
+                options: { 
+                    A: "Low temperature and high salt concentration", 
+                    B: "Low temperature and low salt concentration", 
+                    C: "High temperature and high salt concentration", 
+                    D: "High temperature and low salt concentration" 
+                },
+                correctAnswer: "D",
+                rationale: "High stringency conditions permit hybridization only between nucleic acid sequences that are highly complementary. High temperature favors denaturation and breaks weaker, mismatched hydrogen bonds. Low salt concentration also favors denaturation because the repulsive forces between the negatively charged phosphate backbones are not shielded by cations. Therefore, combining high temperature and low salt creates the highest stringency.",
+                source: "'Thus, high stringency, such as high hybridization temperature and low salt in hybridization buffers, permits only hybridization between nucleic acid sequences that are highly complementary, whereas low stringency, such as lower temperature and high salt, allows hybridization when the sequences are less complementary...' (Nucleic Acids, Page 4)"
+            },
+            {
+                learningObjective: "LO 1 (Nucleic Acids): Explain the process of denaturation and renaturation (annealing) of nucleic acids and its use in laboratory techniques.",
+                question: "During the process of DNA denaturation by heat, a phenomenon known as the hyperchromic shift is observed. This refers to which of the following changes?",
+                options: { 
+                    A: "A decrease in absorbance of UV light at 260 nm as the DNA helix unwinds.", 
+                    B: "An increase in absorbance of UV light at 260 nm as the DNA helix unwinds.", 
+                    C: "A shift in the peak absorbance wavelength from 260 nm to 280 nm.", 
+                    D: "The breakage of phosphodiester bonds, releasing individual nucleotides." 
+                },
+                correctAnswer: "B",
+                rationale: "The stacked bases in a double-stranded DNA helix partially shield each other from UV light. When the DNA is denatured, the strands separate and the bases become unstacked and more exposed. This unstacking leads to an increase in the molar absorptivity of the DNA solution, resulting in a higher absorbance of UV light at 260 nm.",
+                source: "'Denaturation is accompanied with increase in absorbance at 260 nm, the wavelength at which nucleobases absorb light. This is called - hyperchromic shift.' (Nucleic Acids, Page 4)"
+            },
+            {
+                learningObjective: "LO 1 (Nucleic Acids): Explain the process of denaturation and renaturation (annealing) of nucleic acids and its use in laboratory techniques.",
+                question: "A researcher is working with two different DNA samples. Sample 1 has a GC content of 40%, and Sample 2 has a GC content of 60%. The researcher heats both samples to separate the strands. Which of the following is the most likely observation regarding the melting temperature (Tm) of these two samples?",
+                options: { 
+                    A: "The Tm of Sample 1 will be higher than Sample 2.", 
+                    B: "The Tm of Sample 2 will be higher than Sample 1.", 
+                    C: "The Tm of both samples will be identical.", 
+                    D: "The Tm is independent of the GC content." 
+                },
+                correctAnswer: "B",
+                rationale: "G-C base pairs are held together by three hydrogen bonds, whereas A-T pairs are held by two. DNA with a higher GC content has more triple hydrogen bonds, making it more thermally stable and requiring more energy (a higher temperature) to denature.",
+                source: "'The Tm of a nucleic acid depends on the base composition; higher the GC content, higher is the Tm.' (Nucleic Acids, Page 4)"
+            },
+             {
+                learningObjective: "LO 2 (Nucleic Acids): Discuss the salient features of prokaryotic DNAs and the importance of gyrase.",
+                question: "A new antibiotic is found to be effective against E. coli by causing an accumulation of double-strand breaks in the bacterial chromosome, leading to cell death. This antibiotic most likely inhibits which of the following enzymes?",
+                options: { 
+                    A: "DNA polymerase III", 
+                    B: "Helicase", 
+                    C: "DNA gyrase (a type II topoisomerase)", 
+                    D: "Primase" 
+                },
+                correctAnswer: "C",
+                rationale: "DNA gyrase is a type II topoisomerase that introduces negative supercoils into the circular prokaryotic DNA. It does this by creating a transient double-strand break, passing another segment of DNA through the break, and then resealing it. Antibiotics like ciprofloxacin and novobiocin target gyrase, blocking the resealing step. This leads to the accumulation of lethal double-strand breaks in the bacterial DNA.",
+                source: "'These drugs block the enzyme at a step in the enzyme reaction after the double strand break is made, however, before it is resealed. Therefore, treatment with these antibiotics will result in double strand breaks in the DNA molecule.' (Nucleic Acids, Page 6)"
+            },
+            {
+                learningObjective: "LO 2 (Nucleic Acids): Discuss the salient features of prokaryotic DNAs and the importance of gyrase.",
+                question: "Which of the following is a key structural feature of prokaryotic DNA that distinguishes it from the nuclear DNA of eukaryotes?",
+                options: { 
+                    A: "It is a linear molecule with telomeres at both ends.", 
+                    B: "It is complexed with histone proteins to form chromatin.", 
+                    C: "It is a covalently closed, circular molecule.", 
+                    D: "It contains numerous introns that are removed by splicing." 
+                },
+                correctAnswer: "C",
+                rationale: "The DNA in prokaryotes is typically a single, covalently closed, circular molecule that is supercoiled and located in the nucleoid region. In contrast, the nuclear DNA of eukaryotes is organized into multiple linear chromosomes, which are associated with histones and have specialized structures called telomeres at their ends.",
+                source: "'The DNA in prokaryotes is covalently closed, circular DNA that is negatively supercoiled. It is not complexed to any structural proteins such as histones.' (Nucleic Acids, Page 6)"
+            },
+            {
+                learningObjective: "LO 2 (Nucleic Acids): Discuss the salient features of prokaryotic DNAs and the importance of gyrase.",
+                question: "A bacterial strain has a temperature-sensitive mutation in the gene encoding DNA gyrase. The mutant bacteria grow normally at 30°C but stop dividing when shifted to 42°C. Which of the following cellular processes is most likely directly inhibited at the non-permissive temperature (42°C) due to the non-functional gyrase?",
+                options: { 
+                    A: "Ribosome synthesis", 
+                    B: "Peptidoglycan synthesis", 
+                    C: "Protein translation", 
+                    D: "DNA replication and transcription" 
+                },
+                correctAnswer: "D",
+                rationale: "DNA gyrase is essential for managing the DNA topology in bacteria. It introduces negative supercoils and relaxes positive supercoils that form ahead of the replication and transcription forks. Without functional gyrase, these processes cannot proceed, leading to a halt in cell division and function.",
+                source: "'Negative supercoils aid in DNA packing, replication, and transcription.' (Nucleic Acids, Page 6)"
+            },
+            {
+                learningObjective: "LO 3 (Nucleic Acids): Discuss the salient features of eukaryotic DNAs and distinguish between chromosomal structures such as telomeres, repetitive/non-repetitive nucleotide sequences, and heterochromatin and euchromatin.",
+                question: "The ends of linear eukaryotic chromosomes are protected by specialized structures composed of long segments of repeated hexameric sequences. These structures are known as:",
+                options: { 
+                    A: "Centromeres", 
+                    B: "Introns", 
+                    C: "Telomeres", 
+                    D: "Promoters" 
+                },
+                correctAnswer: "C",
+                rationale: "Telomeres are found at the ends of linear eukaryotic chromosomes. They consist of thousands of repeats of a short, G-rich sequence (e.g., TTAGGG in humans). Telomeres protect the chromosome ends from degradation and prevent them from being recognized as DNA breaks, thus maintaining chromosomal integrity.",
+                source: "'Both ends of the DNA have long segments of repeated hexameric sequence called TELOMERS.' (Nucleic Acids, Page 7)"
+            },
+            {
+                learningObjective: "LO 3 (Nucleic Acids): Discuss the salient features of eukaryotic DNAs and distinguish between chromosomal structures such as telomeres, repetitive/non-repetitive nucleotide sequences, and heterochromatin and euchromatin.",
+                question: "In the context of the eukaryotic genome, which type of DNA sequence is typically unique, present in only one copy per haploid genome, and primarily codes for proteins?",
+                options: { 
+                    A: "Highly repetitive DNA", 
+                    B: "Minisatellite DNA", 
+                    C: "Moderately repetitive DNA (SINEs and LINEs)", 
+                    D: "Nonrepetitive DNA" 
+                },
+                correctAnswer: "D",
+                rationale: "The eukaryotic genome contains both repetitive and nonrepetitive sequences. Nonrepetitive DNA, also known as unique sequence DNA, consists of sequences that are present only once or a few times in the haploid genome. This fraction of the genome contains most of the protein-coding genes.",
+                source: "'Nonrepetitive sequence is found only one copy per haploid genome and codes for proteins.' (Nucleic Acids, Page 8)"
+            },
+            {
+                learningObjective: "LO 3 (Nucleic Acids): Discuss the salient features of eukaryotic DNAs and distinguish between chromosomal structures such as telomeres, repetitive/non-repetitive nucleotide sequences, and heterochromatin and euchromatin.",
+                question: "A forensic scientist is analyzing DNA samples from a crime scene and a suspect. To establish a link, the scientist amplifies specific regions of the genome that are known to vary in length between individuals. This technique most likely relies on the analysis of which of the following types of repetitive DNA sequences?",
+                options: { 
+                    A: "Long interspersed repeat sequences (LINEs)", 
+                    B: "Nonrepetitive protein-coding sequences", 
+                    C: "Minisatellite repeat sequences (VNTRs)", 
+                    D: "Telomeric repeats" 
+                },
+                correctAnswer: "C",
+                rationale: "Minisatellite sequences, also known as Variable Number of Tandem Repeats (VNTRs), are short sequences that are repeated in tandem. The number of repeats at a given locus is highly variable among individuals, creating a unique DNA fingerprint. This polymorphism is the basis for paternity testing and criminal investigations.",
+                source: "'Minisatellite repeat sequences... many exhibit polymorphism – VNTR polymorphism... This is used in paternity testing and criminal investigations.' (Nucleic Acids, Page 9)"
+            },
+            {
+                learningObjective: "LO 4 (Nucleic Acids): Describe the molecular mechanisms involved in the switching of DNA between heterochromatin and euchromatin states and summarize the mechanism of chromatin remodeling required to make DNA accessible for biological processes.",
+                question: "The transition of a gene from a transcriptionally silent state to an active state often involves the conversion of chromatin from a condensed to an open conformation. Which of the following epigenetic modifications is most directly associated with the formation of open, transcriptionally active euchromatin?",
+                options: { 
+                    A: "Methylation of cytosine residues in CpG islands", 
+                    B: "Acetylation of lysine residues on histone tails", 
+                    C: "Trimethylation of histone H3 at lysine 27 (H3K27me3)", 
+                    D: "Binding of H1 histone to linker DNA" 
+                },
+                correctAnswer: "B",
+                rationale: "Histone acetylation, catalyzed by histone acetyltransferases (HATs), neutralizes the positive charge on lysine residues in the histone tails. This weakens the interaction between the histones and the negatively charged DNA, leading to a more relaxed, open chromatin structure (euchromatin) that is accessible to transcription factors and RNA polymerase.",
+                source: "'Acetylation, the most common and well-studied modification catalyzed by histone acetyl transferases (HATs), generally leads to open chromatin structure and activation of genes because it removes the +ve charge on the lysine residues...' (Nucleic Acids, Page 13)"
+            },
+            {
+                learningObjective: "LO 4 (Nucleic Acids): Describe the molecular mechanisms involved in the switching of DNA between heterochromatin and euchromatin states and summarize the mechanism of chromatin remodeling required to make DNA accessible for biological processes.",
+                question: "In a silenced gene, the promoter region is often found in a heterochromatin state. This state is characterized by which of the following molecular features?",
+                options: { 
+                    A: "Unmethylated CpG islands and acetylated histones", 
+                    B: "Methylated CpG islands and deacetylated histones", 
+                    C: "Unmethylated CpG islands and deacetylated histones", 
+                    D: "Methylated CpG islands and acetylated histones" 
+                },
+                correctAnswer: "B",
+                rationale: "Gene silencing is associated with heterochromatin, a tightly packed form of DNA. This state is established and maintained by epigenetic modifications that promote condensation. These include methylation of cytosine bases in CpG islands within the promoter and the removal of acetyl groups from histone tails by histone deacetylases (HDACs), which restores the positive charge on lysines and strengthens the DNA-histone interaction.",
+                source: "'In a silenced gene, the CpGs in the CpG islands are methylated and the promoter is in the heterochromatin state...' (Nucleic Acids, Page 11) and 'Deacetylation, catalyzed by histone deacetylases (HDACs), leads to condensation and inactivation of gene expression.' (Nucleic Acids, Page 13)"
+            },
+            {
+                learningObjective: "LO 4 (Nucleic Acids): Describe the molecular mechanisms involved in the switching of DNA between heterochromatin and euchromatin states and summarize the mechanism of chromatin remodeling required to make DNA accessible for biological processes.",
+                question: "A new experimental drug for cancer therapy is found to reactivate the expression of silenced tumor suppressor genes. Further analysis shows that the drug causes a global increase in histone acetylation in the promoter regions of these genes. This drug most likely functions by inhibiting which of the following enzymes?",
+                options: { 
+                    A: "DNA methyltransferases (DNMTs)", 
+                    B: "Histone acetyltransferases (HATs)", 
+                    C: "Histone deacetylases (HDACs)", 
+                    D: "RNA polymerase II" 
+                },
+                correctAnswer: "C",
+                rationale: "Histone deacetylases (HDACs) remove acetyl groups from histone tails, which leads to chromatin condensation and gene silencing. Inhibiting HDACs would prevent the removal of these acetyl groups, leading to their accumulation. This results in a more open chromatin structure (euchromatin) and allows for the reactivation of gene expression, including silenced tumor suppressor genes.",
+                source: "'Deacetylation, catalyzed by histone deacetylases (HDACs), leads to condensation and inactivation of gene expression.' and 'inhibitors of... HDACs tend to activate gene expression...' (Nucleic Acids, Pages 13 & 14)"
+            },
+            {
+                learningObjective: "LO 5 (Nucleic Acids): Briefly discuss the structure and function of RNAs that are common in both prokaryotes and eukaryotes and explain the significance of additional functional and regulatory RNAs found in eukaryotes.",
+                question: "A key difference between prokaryotic and eukaryotic messenger RNA (mRNA) is the processing that occurs at the ends of the eukaryotic transcript. Which of the following modifications are characteristic of eukaryotic mRNA but absent in prokaryotic mRNA?",
+                options: { 
+                    A: "Removal of introns by splicing", 
+                    B: "A 5' cap and a 3' poly(A) tail", 
+                    C: "Association with ribosomal proteins", 
+                    D: "Presence of a Shine-Dalgarno sequence" 
+                },
+                correctAnswer: "B",
+                rationale: "Eukaryotic pre-mRNA undergoes extensive post-transcriptional processing, including the addition of a 7-methylguanosine cap to the 5' end and a poly(A) tail to the 3' end. These modifications protect the mRNA from degradation and are essential for its export and translation. Prokaryotic mRNAs lack both the 5' cap and the 3' poly(A) tail.",
+                source: "'Eukaryotic mRNA is capped at the 5' end and has poly(A) tail at 3' end (both done posttranscriptionally). Prokaryotic mRNAs lack the cap and tail...' (Nucleic Acids, Page 22)"
+            },
+            {
+                learningObjective: "LO 5 (Nucleic Acids): Briefly discuss the structure and function of RNAs that are common in both prokaryotes and eukaryotes and explain the significance of additional functional and regulatory RNAs found in eukaryotes.",
+                question: "A class of small, non-coding regulatory RNAs found in eukaryotes plays a crucial role in post-transcriptional gene silencing by inducing target mRNA degradation or inhibiting translation. These molecules are approximately 19-25 nucleotides long. What is this class of RNA?",
+                options: { 
+                    A: "Transfer RNA (tRNA)", 
+                    B: "Ribosomal RNA (rRNA)", 
+                    C: "Long non-coding RNA (lncRNA)", 
+                    D: "MicroRNA (miRNA)" 
+                },
+                correctAnswer: "D",
+                rationale: "MicroRNAs (miRNAs) are short (19-25 nucleotides) non-coding RNAs that are key regulators of gene expression in eukaryotes. They bind to complementary sequences in the 3' UTR of target mRNAs, leading to either the degradation of the mRNA or the repression of its translation, thereby silencing the gene at the post-transcriptional level.",
+                source: "'miRNA- micro RNA; 19-25 nucleotides long; non-coding regulatory RNAs... miRNAs serve widespread functions in post-transcriptional gene silencing by inducing target RNA degradation (reducing mRNA stability) or translational inhibition...' (Nucleic Acids, Page 24)"
+            },
+            {
+                learningObjective: "LO 5 (Nucleic Acids): Briefly discuss the structure and function of RNAs that are common in both prokaryotes and eukaryotes and explain the significance of additional functional and regulatory RNAs found in eukaryotes.",
+                question: "A researcher is studying a type of RNA molecule that is 80 bases long, contains unusual bases like pseudouridine and dihydrouridine, and folds into a characteristic 'clover leaf' two-dimensional structure. This molecule's primary function is most likely to:",
+                options: { 
+                    A: "Serve as a template for protein synthesis.", 
+                    B: "Act as a structural component of the ribosome.", 
+                    C: "Serve as an adaptor molecule, carrying amino acids to the ribosome.", 
+                    D: "Regulate gene expression through post-transcriptional silencing." 
+                },
+                correctAnswer: "C",
+                rationale: "The described features—a length of 75-85 bases, the presence of unusual/modified bases, and a cloverleaf secondary structure—are all hallmarks of transfer RNA (tRNA). The function of tRNA is to act as an adaptor, matching a specific mRNA codon with the corresponding amino acid during protein synthesis.",
+                source: "'tRNAs are 75-85 bases long... contain several unusual bases such as pseudouridine (ψ), dihydrouridine (D)... serve as adaptor molecules, carrying specific amino acids to the site of protein synthesis... The base-pairing results in a two dimensional 'clover leaf' structure...' (Nucleic Acids, Page 18)"
+            },
+            // Nucleus Structure & Cell Cycle Questions
+            {
+                learningObjective: "LO 1 (Nucleus Structure & Cell Cycle): Identify the structural elements of the nucleus, including the nuclear membrane, lamins, pores, matrix/scaffold, euchromatin and heterochromatin, and nucleolus and be able to discuss the functional significance of each structure.",
+                question: "A researcher observes a cell with multiple, prominent nucleoli using electron microscopy. This finding is most indicative of which of the following cellular states?",
+                options: { 
+                    A: "Terminal differentiation", 
+                    B: "Quiescence (G0 phase)", 
+                    C: "Active growth and proliferation", 
+                    D: "Apoptosis" 
+                },
+                correctAnswer: "C",
+                rationale: "The nucleolus is the primary site of ribosome biogenesis (rRNA synthesis and assembly of ribosomal subunits). Cells that are actively growing and dividing require a large number of ribosomes to support high rates of protein synthesis. Therefore, the presence of multiple or large, prominent nucleoli is a hallmark of a metabolically active and proliferating cell.",
+                source: "'Cells can have multiple nucleoli. What is this indicative of? active growth and division= cell proliferation' (Nucleus Structure & Cell Cycle, Page 21)"
+            },
+            {
+                learningObjective: "LO 1 (Nucleus Structure & Cell Cycle): Identify the structural elements of the nucleus, including the nuclear membrane, lamins, pores, matrix/scaffold, euchromatin and heterochromatin, and nucleolus and be able to discuss the functional significance of each structure.",
+                question: "The nuclear lamina is a fibrillar network that provides mechanical support to the nucleus and serves as an attachment site for chromatin. This structure is primarily composed of which type of protein?",
+                options: { 
+                    A: "Actin filaments", 
+                    B: "Microtubules", 
+                    C: "Intermediate filaments (Lamins A, B, & C)", 
+                    D: "Histones" 
+                },
+                correctAnswer: "C",
+                rationale: "The nuclear lamina is a meshwork of proteins located just beneath the inner nuclear membrane. It is composed of lamins, which are a type of intermediate filament protein. This network is critical for maintaining the shape and stability of the nucleus.",
+                source: "'Comprised of nuclear lamins A, B, & C: 10 - 12 nm- intermediate filaments & membrane associated proteins' (Nucleus Structure & Cell Cycle, Page 31)"
+            },
+            {
+                learningObjective: "LO 1 (Nucleus Structure & Cell Cycle): Identify the structural elements of the nucleus, including the nuclear membrane, lamins, pores, matrix/scaffold, euchromatin and heterochromatin, and nucleolus and be able to discuss the functional significance of each structure.",
+                question: "During an electron microscopy study of a hepatocyte, a researcher notes that ribosomes are studding the surface of a membrane that is directly continuous with the outer membrane of the nuclear envelope. This continuous membrane system is part of which organelle?",
+                options: { 
+                    A: "Golgi apparatus", 
+                    B: "Peroxisome", 
+                    C: "Endoplasmic reticulum", 
+                    D: "Mitochondrion" 
+                },
+                correctAnswer: "C",
+                rationale: "The nuclear envelope is a double membrane system. The outer nuclear membrane is physically continuous with the membrane of the endoplasmic reticulum (ER). This continuity links the perinuclear space with the ER lumen and explains why the outer nuclear membrane is often studded with ribosomes, similar to the rough ER.",
+                source: "'ER = Outer nuclear membrane is continuous with ENDOPLASMIC RETICULUM (ER)' (Nucleus Structure & Cell Cycle, Page 8) and diagram on Page 7."
+            },
+            {
+                learningObjective: "LO 2 (Nucleus Structure & Cell Cycle): Be able to describe the mechanism of nuclear import/export via the nuclear pores.",
+                question: "A large protein (>40 kDa) destined for the nucleus must be actively transported through the nuclear pore complex. This process requires the protein to have a specific amino acid sequence that is recognized by transport receptors. What is this sequence called?",
+                options: { 
+                    A: "Signal peptide", 
+                    B: "Nuclear localization signal (NLS)", 
+                    C: "KDEL sequence", 
+                    D: "Shine-Dalgarno sequence" 
+                },
+                correctAnswer: "B",
+                rationale: "The selective entry of large proteins into the nucleus is mediated by a nuclear localization signal (NLS). The NLS is a short stretch of basic amino acids (like lysine and arginine) within the protein's sequence. It is recognized and bound by nuclear transport receptors called importins (a type of karyopherin), which then shuttle the protein through the nuclear pore.",
+                source: "'NLS = NUCLEAR LOCALIZATION SIGNAL: short stretch of basic amino acids, sometimes not contiguous' (Nucleus Structure & Cell Cycle, Page 14)"
+            },
+            {
+                learningObjective: "LO 2 (Nucleus Structure & Cell Cycle): Be able to describe the mechanism of nuclear import/export via the nuclear pores.",
+                question: "The directionality of nuclear transport is regulated by the small GTPase Ran. The concentration gradient of Ran-GTP, which is high inside the nucleus and low in the cytoplasm, is maintained by the specific locations of Ran's regulatory proteins. Which protein is located in the nucleus and promotes the conversion of Ran-GDP to Ran-GTP?",
+                options: { 
+                    A: "Ran-GAP (GTPase Activating Protein)", 
+                    B: "Ran-GEF (Guanine Nucleotide Exchange Factor)", 
+                    C: "Importin β", 
+                    D: "Exportin" 
+                },
+                correctAnswer: "B",
+                rationale: "The high concentration of Ran-GTP inside the nucleus is essential for releasing imported cargo from importins and for binding cargo to exportins. This gradient is maintained because the Ran Guanine Nucleotide Exchange Factor (Ran-GEF) is localized exclusively in the nucleus, where it catalyzes the exchange of GDP for GTP on Ran. Conversely, Ran-GAP is in the cytoplasm, promoting GTP hydrolysis.",
+                source: "'Ran-GEF' is shown inside the nucleus catalyzing the conversion of Ran-GDP to Ran-GTP in the diagram. (Nucleus Structure & Cell Cycle, Page 16)"
+            },
+            {
+                learningObjective: "LO 2 (Nucleus Structure & Cell Cycle): Be able to describe the mechanism of nuclear import/export via the nuclear pores.",
+                question: "A cell is engineered to express two different fluorescent proteins. Protein A is 25 kDa, and Protein B is 70 kDa. Neither protein has a nuclear localization signal (NLS). After synthesis in the cytoplasm, what is the most likely subcellular distribution of these two proteins?",
+                options: { 
+                    A: "Both Protein A and Protein B will be exclusively in the cytoplasm.", 
+                    B: "Both Protein A and Protein B will freely diffuse into the nucleus.", 
+                    C: "Protein A will be found in both the cytoplasm and nucleus, while Protein B will be excluded from the nucleus.", 
+                    D: "Protein B will be found in both the cytoplasm and nucleus, while Protein A will be excluded from the nucleus." 
+                },
+                correctAnswer: "C",
+                rationale: "The nuclear pore complex allows for passive diffusion of small molecules and proteins. The general size cutoff for this passive diffusion is around 40-60 kDa. Therefore, the 25 kDa Protein A is small enough to diffuse freely between the cytoplasm and nucleus, while the 70 kDa Protein B is too large and will be retained in the cytoplasm because it lacks an NLS for active transport.",
+                source: "'< 40 kd protein & small molecules enter by passive diffusion' and 'Nuclear Import/Export of large proteins >40kd Requires a nuclear localization signal' (Nucleus Structure & Cell Cycle, Pages 12 & 13)"
+            },
+            {
+                learningObjective: "LO 3 (Nucleus Structure & Cell Cycle): Recognize specific mutations in lamins and other nuclear envelope proteins that underlie specific genetic disorders referred to as nuclear laminopathies and/or nuclear envelopathies.",
+                question: "A child presents with features of premature aging, including growth failure, loss of body fat, and aged-looking skin. A diagnosis of Hutchinson-Gilford Progeria Syndrome is made. This rare genetic disorder is caused by a mutation in which of the following genes?",
+                options: { 
+                    A: "EMD (Emerin)", 
+                    B: "FBN1 (Fibrillin-1)", 
+                    C: "LMNA (Lamin A/C)", 
+                    D: "P53 (Tumor protein 53)" 
+                },
+                correctAnswer: "C",
+                rationale: "Hutchinson-Gilford Progeria Syndrome is a classic example of a laminopathy, a group of disorders caused by mutations in the LMNA gene. The specific mutation in HGPS leads to the production of an abnormal, toxic form of lamin A called progerin, which disrupts nuclear architecture and function, leading to the phenotype of accelerated aging.",
+                source: "'Hutchinson-Gilford Progeria syndrome mutation in LMNA: Laminopathy' (Nucleus Structure & Cell Cycle, Page 38)"
+            },
+            {
+                learningObjective: "LO 3 (Nucleus Structure & Cell Cycle): Recognize specific mutations in lamins and other nuclear envelope proteins that underlie specific genetic disorders referred to as nuclear laminopathies and/or nuclear envelopathies.",
+                question: "The abnormal protein produced in Hutchinson-Gilford Progeria Syndrome, known as progerin, disrupts nuclear architecture. This is due to a defect in protein processing that leaves a specific lipid modification permanently attached, causing the protein to be improperly anchored to the nuclear membrane. What is this lipid modification process?",
+                options: { 
+                    A: "Acetylation", 
+                    B: "Glycosylation", 
+                    C: "Phosphorylation", 
+                    D: "Farnesylation" 
+                },
+                correctAnswer: "D",
+                rationale: "Prelamin A undergoes a series of post-translational modifications, including farnesylation (the addition of a farnesyl lipid group), to properly integrate into the nuclear lamina. In the final step, this farnesyl group is normally cleaved off to produce mature lamin A. In HGPS, a mutation prevents this final cleavage step, resulting in the accumulation of permanently farnesylated, toxic progerin. Farnesylation inhibitors are a potential treatment that blocks this process.",
+                source: "The diagram 'Lamin A and progerin processing' shows 'Farnesylation' as a key step. The slide 'Potential Treatments...' mentions 'Farnesylation Inhibitors FDA approved'. (Nucleus Structure & Cell Cycle, Pages 39 & 42)"
+            },
+            {
+                learningObjective: "LO 3 (Nucleus Structure & Cell Cycle): Recognize specific mutations in lamins and other nuclear envelope proteins that underlie specific genetic disorders referred to as nuclear laminopathies and/or nuclear envelopathies.",
+                question: "A 35-year-old man with no history of coronary artery disease presents with progressive heart failure and is diagnosed with dilated cardiomyopathy. Genetic testing reveals a mutation in the LMNA gene. This patient's condition is an example of which of the following classes of genetic disorders?",
+                options: { 
+                    A: "A mitochondrial myopathy", 
+                    B: "A glycogen storage disease", 
+                    C: "A lysosomal storage disease", 
+                    D: "A laminopathy" 
+                },
+                correctAnswer: "D",
+                rationale: "Laminopathies are a group of diseases caused by mutations in the LMNA gene, which codes for lamins A and C. While these proteins are present in almost all cells, mutations can have surprisingly tissue-specific effects. One of the most common manifestations of LMNA mutations is cardiomyopathy, which involves cardiac muscle wasting and heart failure.",
+                source: "'Laminopathies (rare disorders): mutations in laminA/C are responsible for over 20 disease states. • Cardiomyopathy: cardiac muscle wasting in the heart - heart attack' (Nucleus Structure & Cell Cycle, Page 36)"
+            },
+            {
+                learningObjective: "LO 4 (Nucleus Structure & Cell Cycle): List the major cyclins and their CDKs and identify how their expression and/or activity are regulated during the cell cycle.",
+                question: "Progression through the cell cycle is driven by the sequential activation of cyclin-dependent kinases (CDKs). The activity of a given CDK is primarily dependent on its association with which type of regulatory protein, whose concentration oscillates throughout the cell cycle?",
+                options: { 
+                    A: "Growth factors", 
+                    B: "Cyclins", 
+                    C: "Transcription factors", 
+                    D: "Topoisomerases" 
+                },
+                correctAnswer: "B",
+                rationale: "CDKs are constitutively expressed but are inactive on their own. Their kinase activity is triggered only when they bind to a specific cyclin partner. The concentrations of cyclins rise and fall in a predictable pattern during the cell cycle, and it is this oscillation that dictates the timing of CDK activation and thus the progression from one phase of the cell cycle to the next.",
+                source: "'Cdks are regulated by phosphorylation and dephosphorylation reactions. They can be activated only when cyclin is bound to them.' (Nucleus Structure & Cell Cycle, Page 48)"
+            },
+            {
+                learningObjective: "LO 4 (Nucleus Structure & Cell Cycle): List the major cyclins and their CDKs and identify how their expression and/or activity are regulated during the cell cycle.",
+                question: "The transition from G2 to M phase is triggered by the activation of the M-phase promoting factor (MPF). MPF is a complex consisting of which of the following pairs?",
+                options: { 
+                    A: "Cyclin D and CDK4/6", 
+                    B: "Cyclin E and CDK2", 
+                    C: "Cyclin A and CDK2", 
+                    D: "Cyclin B and CDK1 (CDC2)" 
+                },
+                correctAnswer: "D",
+                rationale: "M-phase promoting factor (MPF) is the key regulator that drives the cell into mitosis. It is a heterodimer composed of the mitotic cyclin, Cyclin B, and the cyclin-dependent kinase, CDK1 (also known as CDC2).",
+                source: "'MPF = CDK1 (CDC2) + Cyclin B' (Nucleus Structure & Cell Cycle, Page 47)"
+            },
+            {
+                learningObjective: "LO 4 (Nucleus Structure & Cell Cycle): List the major cyclins and their CDKs and identify how their expression and/or activity are regulated during the cell cycle.",
+                question: "For a cell to exit mitosis and enter the next G1 phase, the activity of M-phase promoting factor (MPF) must be abruptly terminated. This termination is primarily achieved through which of the following molecular mechanisms?",
+                options: { 
+                    A: "Phosphorylation of CDK1", 
+                    B: "Dephosphorylation of Cyclin B", 
+                    C: "Ubiquitination and proteasomal degradation of Cyclin B", 
+                    D: "Nuclear export of the MPF complex" 
+                },
+                correctAnswer: "C",
+                rationale: "The exit from mitosis requires the inactivation of MPF (CDK1/Cyclin B). This is accomplished not by modifying the complex, but by destroying the regulatory cyclin subunit. Cyclin B is targeted by the anaphase-promoting complex (APC), a ubiquitin ligase, which attaches ubiquitin tags to it. This marks Cyclin B for rapid degradation by the proteasome, leading to a sharp drop in MPF activity.",
+                source: "'Cyclin levels are controlled by ubiquitation and degradation in the proteasome' and an accompanying diagram showing ubiquitination of M-cyclin leading to its destruction. (Nucleus Structure & Cell Cycle, Page 49)"
+            },
+            {
+                learningObjective: "LO 5 (Nucleus Structure & Cell Cycle): Discuss how altered expression/activation of CDKs/cyclins affects cancer cell growth and understand the mechanism underlying the use of CDK4/6 inhibitors for cancer treatment.",
+                question: "In many types of breast cancer, cell cycle progression through the G1 phase is driven by the overexpression of a particular cyclin that responds to growth factor signaling. This cyclin forms a complex with CDK4 and CDK6, which then phosphorylates the retinoblastoma protein (Rb). Which cyclin is commonly overexpressed in these cancers?",
+                options: { 
+                    A: "Cyclin A", 
+                    B: "Cyclin B", 
+                    C: "Cyclin D", 
+                    D: "Cyclin E" 
+                },
+                correctAnswer: "C",
+                rationale: "Cyclin D is a key link between extracellular growth factor signals and the cell cycle machinery. Growth factor signaling leads to the synthesis of Cyclin D, which then complexes with CDK4/6. This complex is responsible for the initial phosphorylation of Rb, which allows the cell to pass the restriction point and commit to division. Overexpression of Cyclin D leads to unregulated Rb phosphorylation and uncontrolled proliferation, a hallmark of cancer.",
+                source: "'Note: some cancers have elevated cyclins that contribute to unregulated growth, ie. increased cyclin D levels in breast cancer' (Nucleus Structure & Cell Cycle, Page 49) and diagram showing growth factor signaling leading to cyclinD/Cdk4/6. (Page 58)"
+            },
+            {
+                learningObjective: "LO 5 (Nucleus Structure & Cell Cycle): Discuss how altered expression/activation of CDKs/cyclins affects cancer cell growth and understand the mechanism underlying the use of CDK4/6 inhibitors for cancer treatment.",
+                question: "A patient has a tumor in which the p21 protein is non-functional due to a mutation. p21 is a cyclin-dependent kinase inhibitor (CKI) that is normally induced by p53 in response to DNA damage. The loss of p21 function would most directly lead to the inappropriate activation of which of the following complexes, allowing cells with damaged DNA to proceed through the cell cycle?",
+                options: { 
+                    A: "Cyclin B/CDK1", 
+                    B: "Cyclin D/CDK4", 
+                    C: "Cyclin E/CDK2 and Cyclin A/CDK2", 
+                    D: "Anaphase-promoting complex (APC)" 
+                },
+                correctAnswer: "C",
+                rationale: "p21 is a member of the Cip/Kip family of CKIs, which also includes p27 and p57. These inhibitors can block the activity of several cyclin/CDK complexes, but they are particularly important for regulating the G1/S and S-phase transitions by inhibiting Cyclin E/CDK2 and Cyclin A/CDK2. Loss of p21 removes this brake, contributing to uncontrolled cell division.",
+                source: "The diagram on page 52 shows p21Cip1 inhibiting Cyclin E/CDK2, Cyclin A/CDK2, and Cyclin A/CDK1. Its primary role as a checkpoint is at G1/S. (Nucleus Structure & Cell Cycle, Page 52)"
+            },
+            {
+                learningObjective: "LO 5 (Nucleus Structure & Cell Cycle): Discuss how altered expression/activation of CDKs/cyclins affects cancer cell growth and understand the mechanism underlying the use of CDK4/6 inhibitors for cancer treatment.",
+                question: "A patient with hormone receptor-positive breast cancer is being treated with a CDK4/6 inhibitor such as palbociclib. The therapeutic effect of this drug is achieved by preventing the phosphorylation of which key substrate, thereby causing a G1 cell cycle arrest?",
+                options: { 
+                    A: "p53", 
+                    B: "Cyclin D", 
+                    C: "Retinoblastoma protein (Rb)", 
+                    D: "Histone H1" 
+                },
+                correctAnswer: "C",
+                rationale: "In hormone-driven breast cancer, growth factor signaling leads to the upregulation of Cyclin D, which activates CDK4/6. The primary function of the Cyclin D/CDK4/6 complex is to phosphorylate and inactivate the retinoblastoma protein (Rb). By inhibiting CDK4/6, drugs like palbociclib prevent Rb phosphorylation, keeping Rb in its active, growth-suppressive state. This blocks cells from progressing from G1 to S phase.",
+                source: "The diagram on page 59 shows the CyclinD/Cdk4/6 complex acting on Rb to control G1-S progression. The LO also explicitly mentions CDK4/6 inhibitors. (Nucleus Structure & Cell Cycle, Pages 2 & 59)"
+            },
+            // DNA Replication & Repair Questions
+            {
+                learningObjective: "LO 1 (DNA Replication & Repair): Describe how processes involved in DNA replication can be targeted by anticancer and antimicrobial drugs.",
+                question: "A patient with cancer is treated with etoposide, a chemotherapeutic drug that stabilizes the complex between DNA and topoisomerase II after the enzyme has created a double-strand break. This mechanism of action leads to which of the following outcomes in the cancer cells?",
+                options: { 
+                    A: "Inhibition of RNA primer synthesis", 
+                    B: "Termination of DNA chain elongation", 
+                    C: "Prevention of positive supercoil relief", 
+                    D: "Generation of permanent double-strand breaks in DNA" 
+                },
+                correctAnswer: "D",
+                rationale: "Topoisomerase II relieves torsional stress by creating a transient double-strand break. Etoposide traps the enzyme in its covalent complex with the broken DNA ends, preventing the resealing step. This converts the transient, necessary break into a permanent, lethal double-strand break, which triggers apoptosis in rapidly dividing cancer cells.",
+                source: "'Doxorubicin and Etoposide stabilizes the topoisomerase II complex after it has broken the DNA chain, generates double strand breaks in DNA' (DNA Replication & Repair, Page 9)"
+            },
+            {
+                learningObjective: "LO 1 (DNA Replication & Repair): Describe how processes involved in DNA replication can be targeted by anticancer and antimicrobial drugs.",
+                question: "Zidovudine (AZT) is a nucleoside analog used in the treatment of HIV. It inhibits the viral enzyme reverse transcriptase. The mechanism by which AZT terminates DNA chain elongation is the absence of which chemical group?",
+                options: { 
+                    A: "A 5' phosphate group", 
+                    B: "A 2' hydroxyl group", 
+                    C: "A 3' hydroxyl group", 
+                    D: "A nitrogenous base" 
+                },
+                correctAnswer: "C",
+                rationale: "DNA polymerases extend a growing DNA chain by forming a phosphodiester bond between the 5' phosphate of an incoming dNTP and the 3' hydroxyl (-OH) group of the last nucleotide in the chain. Nucleoside analogs like AZT are modified such that they lack this 3' -OH group (AZT has an azido group instead). Once incorporated, no further nucleotides can be added, thus terminating chain elongation.",
+                source: "'Nucleosides that Lack 3' OH Group are Used as Drugs... These drugs inhibit DNA replication acting as chain terminators' (DNA Replication & Repair, Page 6)"
+            },
+            {
+                learningObjective: "LO 1 (DNA Replication & Repair): Describe how processes involved in DNA replication can be targeted by anticancer and antimicrobial drugs.",
+                question: "A bacterial strain is developed that has a mutation in the gene for DNA polymerase III, specifically eliminating its 3' to 5' exonuclease activity but leaving its polymerase activity intact. Which of the following is the most likely consequence for this bacterial strain?",
+                options: { 
+                    A: "An inability to remove RNA primers", 
+                    B: "A significantly increased spontaneous mutation rate", 
+                    C: "An inability to initiate DNA synthesis", 
+                    D: "A failure to separate the two DNA strands during replication" 
+                },
+                correctAnswer: "B",
+                rationale: "The 3' to 5' exonuclease activity of DNA polymerase is its proofreading function. It allows the enzyme to remove a newly incorporated nucleotide if it is mismatched. Eliminating this activity means that replication errors will not be corrected, leading to a dramatic increase in the rate of spontaneous mutations.",
+                source: "'3' to 5' exonuclease activity- removes mispaired bases, proofreading enzyme activity... Fidelity of DNA replication 3' to 5' exonuclease activity is responsible.' (DNA Replication & Repair, Page 7)"
+            },
+            {
+                learningObjective: "LO 2 (DNA Replication & Repair): Explain the significance and process of RNA-dependent DNA replication in telomere synthesis and relate telomere dynamics to aging.",
+                question: "Most somatic cells in the human body have a limited number of divisions before they enter a state of senescence. This is partly due to the progressive shortening of chromosomes with each replication cycle. Which enzyme, typically active in stem cells and cancer cells but absent in most somatic cells, counteracts this shortening?",
+                options: { 
+                    A: "DNA polymerase δ", 
+                    B: "DNA ligase", 
+                    C: "Telomerase", 
+                    D: "Helicase" 
+                },
+                correctAnswer: "C",
+                rationale: "The 'end replication problem' results in the shortening of linear chromosomes because the RNA primer at the very 5' end of the lagging strand cannot be replaced with DNA. Telomerase is a specialized reverse transcriptase that carries its own RNA template. It adds repetitive DNA sequences to the 3' ends of chromosomes (telomeres), compensating for the shortening and allowing for continued cell division.",
+                source: "'Somatic cells lack telomerase (RNA-dependent DNA polymerase, reverse transcriptase) activity; die after 20-60 divisions...Immortal cells (stem cells) have telomerase activity' (DNA Replication & Repair, Page 11)"
+            },
+            {
+                learningObjective: "LO 2 (DNA Replication & Repair): Explain the significance and process of RNA-dependent DNA replication in telomere synthesis and relate telomere dynamics to aging.",
+                question: "A researcher is attempting to purify telomerase from a culture of immortalized human cells. In addition to a protein component with reverse transcriptase activity, the purified active enzyme complex must also contain which of the following?",
+                options: { 
+                    A: "A small DNA molecule", 
+                    B: "An RNA molecule", 
+                    C: "A specific tRNA", 
+                    D: "A histone protein" 
+                },
+                correctAnswer: "B",
+                rationale: "Telomerase is a ribonucleoprotein, meaning it is a complex of both protein and RNA. The protein component is a reverse transcriptase (an RNA-dependent DNA polymerase). It uses the associated RNA molecule as a template to synthesize the repetitive DNA sequences that make up the telomere.",
+                source: "'Telomerase is a ribonucleoprotein (protein/RNA complex); the RNA is used as the template to add the repeating units and the protein catalyzes the synthesis of telomere.' (DNA Replication & Repair, Page 10)"
+            },
+            {
+                learningObjective: "LO 2 (DNA Replication & Repair): Explain the significance and process of RNA-dependent DNA replication in telomere synthesis and relate telomere dynamics to aging.",
+                question: "Most normal somatic cells stop dividing after a certain number of cell divisions (the Hayflick limit), a process linked to telomere shortening. Many cancer cells, however, are able to divide indefinitely. This immortal phenotype in cancer cells is most often due to which of the following?",
+                options: { 
+                    A: "Inactivation of DNA polymerase", 
+                    B: "Upregulation or reactivation of telomerase activity", 
+                    C: "Complete loss of telomeric sequences", 
+                    D: "Increased activity of DNA repair pathways" 
+                },
+                correctAnswer: "B",
+                rationale: "By reactivating telomerase, cancer cells can overcome the normal process of telomere shortening that limits the lifespan of somatic cells. This allows them to bypass replicative senescence and achieve immortality, a critical hallmark of cancer. This makes telomerase an attractive target for anti-cancer therapy.",
+                source: "'In vitro, expression of telomerase in primary cells converts it into an immortal cell line. Telomerase is an excellent target for anti-cancer therapy.' (DNA Replication & Repair, Page 11) and 'overexpression of telomerase helps escape senescence and telomerase is overexpressed in cancer cells' (Summary, Page 35)"
+            },
+            {
+                learningObjective: "LO 3 (DNA Replication & Repair): Name the different types of DNA mutations and describe endogenous and exogenous agents that cause these mutations.",
+                question: "Exposure to ultraviolet (UV) radiation from sunlight can damage DNA, leading to an increased risk of skin cancer. What is the most common type of DNA lesion caused by UV radiation?",
+                options: { 
+                    A: "Double-strand breaks", 
+                    B: "Deamination of cytosine to uracil", 
+                    C: "Formation of bulky adducts with guanine", 
+                    D: "Dimerization of adjacent pyrimidine bases" 
+                },
+                correctAnswer: "D",
+                rationale: "UV radiation provides the energy to form covalent bonds between adjacent pyrimidine bases (thymine or cytosine) on the same DNA strand. The most common lesion is a thymine dimer, where two adjacent thymines become linked. This creates a distortion in the DNA helix that blocks replication and transcription.",
+                source: "'UV radiation- cause dimerization of adjacent pyrimidines, especially thymines forming thymine dimers.' (DNA Replication & Repair, Page 16)"
+            },
+            {
+                learningObjective: "LO 3 (DNA Replication & Repair): Name the different types of DNA mutations and describe endogenous and exogenous agents that cause these mutations.",
+                question: "The spontaneous deamination of 5-methylcytosine, an epigenetic mark often found in CpG islands, results in the formation of which normal DNA base, making the mutation difficult for repair systems to detect?",
+                options: { 
+                    A: "Uracil", 
+                    B: "Thymine", 
+                    C: "Guanine", 
+                    D: "Adenine" 
+                },
+                correctAnswer: "B",
+                rationale: "Spontaneous deamination of cytosine creates uracil, which is not a normal DNA base and is readily recognized and removed by repair enzymes. However, deamination of 5-methylcytosine creates thymine. Since thymine is a normal component of DNA, the resulting T-G mismatch may not be efficiently recognized as an error, leading to a C-to-T transition mutation in the next round of replication. This makes CpG sites mutational hotspots.",
+                source: "'Deamination of the methylated cytosines (5-methyl-C; seen in CpG islands) results in the formation of T, a normal base of the DNA and may go undetected. Thus, C to T point mutations are more common in nature.' (DNA Replication & Repair, Page 15)"
+            },
+            {
+                learningObjective: "LO 3 (DNA Replication & Repair): Name the different types of DNA mutations and describe endogenous and exogenous agents that cause these mutations.",
+                question: "A patient with Huntington disease has a son who develops the disease at a much earlier age with more severe symptoms. This phenomenon of worsening disease severity in successive generations is known as anticipation. The molecular basis for anticipation in trinucleotide repeat disorders is which of the following?",
+                options: { 
+                    A: "Increased exposure to environmental mutagens", 
+                    B: "Expansion of the trinucleotide repeat sequence during DNA replication", 
+                    C: "Progressive shortening of telomeres", 
+                    D: "Defective mismatch repair" 
+                },
+                correctAnswer: "B",
+                rationale: "Trinucleotide repeat disorders are caused by an unstable number of tandem repeats of a three-nucleotide sequence. During DNA replication, these repeat regions can form stable hairpin loops, which can trick the replication machinery into expanding the number of repeats. This expansion from one generation to the next is the molecular basis of anticipation.",
+                source: "'The expansion of the trinucleotide repeats is caused by the formation of stable loops during DNA replication... responsible for a genetic condition called anticipation seen in a group of disorders called the trinucleotide repeat disorders' (DNA Replication & Repair, Page 14)"
+            },
+            {
+                learningObjective: "LO 4 (DNA Replication & Repair): Summarize the processes involved in direct repair, base & nucleotide excision and mismatch repair, and recombination-mediated repair pathways.",
+                question: "A patient is diagnosed with xeroderma pigmentosum, a genetic disorder characterized by extreme sensitivity to sunlight and a high incidence of skin cancer. This disease is caused by a defect in which of the following DNA repair pathways?",
+                options: { 
+                    A: "Mismatch repair (MMR)", 
+                    B: "Base excision repair (BER)", 
+                    C: "Nucleotide excision repair (NER)", 
+                    D: "Homologous recombination (HR)" 
+                },
+                correctAnswer: "C",
+                rationale: "Nucleotide excision repair (NER) is the primary pathway for removing bulky, helix-distorting DNA lesions, such as the pyrimidine dimers caused by UV radiation. In xeroderma pigmentosum, one of the several genes involved in the NER pathway (the XP genes) is mutated, leading to an inability to repair sun-induced DNA damage and a dramatically increased risk of skin cancer.",
+                source: "'Defect in the global repair mechanism results in xeroderma pigmentosum.' (The context is the NER pathway). (DNA Replication & Repair, Page 29)"
+            },
+            {
+                learningObjective: "LO 4 (DNA Replication & Repair): Summarize the processes involved in direct repair, base & nucleotide excision and mismatch repair, and recombination-mediated repair pathways.",
+                question: "Lynch syndrome (also known as HNPCC) is a hereditary cancer syndrome that confers a high risk for colorectal, endometrial, and other cancers. The underlying genetic defect in Lynch syndrome impairs which DNA repair pathway?",
+                options: { 
+                    A: "Mismatch repair (MMR)", 
+                    B: "Base excision repair (BER)", 
+                    C: "Nucleotide excision repair (NER)", 
+                    D: "Non-homologous end joining (NHEJ)" 
+                },
+                correctAnswer: "A",
+                rationale: "Mismatch repair (MMR) is responsible for correcting replication errors, such as base-base mismatches and small insertions or deletions. In Lynch syndrome, mutations in MMR genes (like MLH1, MSH2) lead to a failure to repair these errors, particularly in repetitive microsatellite regions. This results in microsatellite instability and a high mutation rate, which drives cancer development.",
+                source: "'Mutations in Mut protein homologs (mainly MLH1, MSH2, MSH6, PMS2, EPCAM) involved in MMR pathway in humans... results in microsatellite region instability... and is associated with a higher risk for a familial cancer syndrome called Lynch Syndrome...' (DNA Replication & Repair, Page 24)"
+            },
+            {
+                learningObjective: "LO 4 (DNA Replication & Repair): Summarize the processes involved in direct repair, base & nucleotide excision and mismatch repair, and recombination-mediated repair pathways.",
+                question: "A cytosine base in DNA spontaneously deaminates to form a uracil. What is the first enzyme that acts to initiate the repair of this type of DNA damage?",
+                options: { 
+                    A: "An exonuclease", 
+                    B: "A DNA glycosylase", 
+                    C: "A DNA polymerase", 
+                    D: "A DNA ligase" 
+                },
+                correctAnswer: "B",
+                rationale: "The Base Excision Repair (BER) pathway is responsible for repairing small, non-helix-distorting base lesions like uracil in DNA. The first step is the recognition and removal of the damaged base by a specific DNA glycosylase. This enzyme cleaves the N-glycosidic bond between the base and the sugar, creating an apurinic/apyrimidinic (AP) site without breaking the DNA backbone.",
+                source: "'The general scheme of the BER pathway entails removal of the damaged base by a glycosylase (creating an abasic site)...' (DNA Replication & Repair, Page 28)"
+            },
+            {
+                learningObjective: "LO 5 (DNA Replication & Repair): Justify why genes involved in DNA repair are called tumor suppressor genes and explain why mutations in DNA repair systems can lead to disease, including certain types of cancer.",
+                question: "Genes such as BRCA1 and BRCA2 are involved in the repair of double-strand DNA breaks. Mutations in these genes significantly increase the risk for breast, ovarian, and other cancers. These genes are classified as which of the following?",
+                options: { 
+                    A: "Proto-oncogenes", 
+                    B: "Tumor suppressor genes", 
+                    C: "Apoptotic genes", 
+                    D: "Cell cycle checkpoint genes" 
+                },
+                correctAnswer: "B",
+                rationale: "Tumor suppressor genes are genes whose normal function is to restrain cell proliferation, often by acting as 'guardians of the genome.' DNA repair genes fit this definition because they maintain genomic integrity and prevent the accumulation of mutations that can lead to cancer. Loss of function of a tumor suppressor gene, like BRCA1/2, removes a critical brake on tumor formation.",
+                source: "'Proteins involved in DNA repair generally function as tumor suppressor proteins.' (DNA Replication & Repair, Page 21) and '...the proteins and enzymes participating in the various DNA repairs pathways are guardians of the genome and are called tumor suppressor proteins/genes.' (DNA Replication & Repair, Page 34)"
+            },
+            {
+                learningObjective: "LO 5 (DNA Replication & Repair): Justify why genes involved in DNA repair are called tumor suppressor genes and explain why mutations in DNA repair systems can lead to disease, including certain types of cancer.",
+                question: "A cell that sustains extensive DNA damage that cannot be repaired will typically be eliminated to prevent it from becoming cancerous. This process of programmed cell death is known as:",
+                options: { 
+                    A: "Senescence", 
+                    B: "Necrosis", 
+                    C: "Apoptosis", 
+                    D: "Autophagy" 
+                },
+                correctAnswer: "C",
+                rationale: "When DNA damage is too severe for repair pathways to handle, cell cycle checkpoints are activated, often involving the p53 protein. This can lead to a halt in the cell cycle (senescence) or the activation of apoptosis, a clean and orderly process of programmed cell death. This is a crucial tumor suppression mechanism that eliminates potentially dangerous cells with unstable genomes.",
+                source: "'In a dividing cell, the cell cycle is temporarily halted until the mutation is repaired or, if the rate of mutations is faster than repair, pathways leading to senescence or apoptosis may be activated.' (DNA Replication & Repair, Page 34)"
+            },
+            {
+                learningObjective: "LO 5 (DNA Replication & Repair): Justify why genes involved in DNA repair are called tumor suppressor genes and explain why mutations in DNA repair systems can lead to disease, including certain types of cancer.",
+                question: "A cell is exposed to ionizing radiation, which causes numerous double-strand breaks. In a healthy cell, the cell cycle is temporarily halted to allow for repair. This response, which prevents the replication of damaged DNA, is a key function of proteins known as:",
+                options: { 
+                    A: "Oncogenes", 
+                    B: "Growth factors", 
+                    C: "Cyclins", 
+                    D: "Tumor suppressors" 
+                },
+                correctAnswer: "D",
+                rationale: "A key function of tumor suppressor proteins (like p53 and DNA repair enzymes) is to act as 'guardians of the genome.' They monitor for DNA damage and, when it is detected, they can halt the cell cycle to provide time for repair or induce apoptosis if the damage is irreparable. This prevents the propagation of mutations that could lead to cancer.",
+                source: "'...the proteins and enzymes participating in the various DNA repairs pathways are guardians of the genome and are called tumor suppressor proteins/genes.' (DNA Replication & Repair, Page 34)"
+            }
+        ];
+
+
+        const quizContainer = document.getElementById('quiz-container');
+        const themeToggleButton = document.getElementById('theme-toggle-button');
+        const bodyElement = document.body;
+
+        function applyTheme(theme) {
+            if (theme === 'light') {
+                bodyElement.classList.add('light-theme');
+                themeToggleButton.textContent = 'Switch to Dark Mode';
+            } else {
+                bodyElement.classList.remove('light-theme');
+                themeToggleButton.textContent = 'Switch to Light Mode';
+            }
+            localStorage.setItem('quizTheme', theme);
+        }
+
+        function loadQuiz() {
+            quizData.forEach((qData, index) => {
+                const questionBlock = document.createElement('div');
+                questionBlock.classList.add('question-block');
+                questionBlock.id = `q${index}`;
+
+                const loText = document.createElement('div');
+                loText.classList.add('learning-objective');
+                loText.textContent = qData.learningObjective;
+                questionBlock.appendChild(loText);
+
+                const questionText = document.createElement('p');
+                questionText.classList.add('question-text');
+                questionText.innerHTML = `${index + 1}. ${qData.question}`;
+                questionBlock.appendChild(questionText);
+
+                const optionsDiv = document.createElement('div');
+                optionsDiv.classList.add('options');
+
+                for (const optionKey in qData.options) {
+                    const optionId = `q${index}_${optionKey}`;
+                    const label = document.createElement('label');
+                    label.htmlFor = optionId;
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.name = `q${index}`;
+                    radioInput.value = optionKey;
+                    radioInput.id = optionId;
+                    const labelText = document.createElement('span');
+                    labelText.textContent = ` ${optionKey}. ${qData.options[optionKey]}`;
+                    label.appendChild(radioInput);
+                    label.appendChild(labelText);
+                    optionsDiv.appendChild(label);
+                }
+                questionBlock.appendChild(optionsDiv);
+
+                const buttonContainer = document.createElement('div');
+                buttonContainer.classList.add('button-container');
+
+                const checkButton = document.createElement('button');
+                checkButton.textContent = 'Check Answer';
+                checkButton.classList.add('check-button');
+                checkButton.onclick = () => checkAnswer(index);
+                buttonContainer.appendChild(checkButton);
+                
+                questionBlock.appendChild(buttonContainer);
+
+                const feedbackDiv = document.createElement('div');
+                feedbackDiv.classList.add('feedback');
+                questionBlock.appendChild(feedbackDiv);
+
+                quizContainer.appendChild(questionBlock);
+            });
+        }
+
+        function checkAnswer(questionIndex) {
+            const questionBlockElement = document.getElementById(`q${questionIndex}`);
+            const selectedRadioButton = questionBlockElement.querySelector('input[type="radio"]:checked');
+
+            if (!selectedRadioButton) {
+                alert("Please select an answer first.");
+                return;
+            }
+
+            const selectedOptionKey = selectedRadioButton.value;
+            const qData = quizData[questionIndex];
+            const feedbackDiv = questionBlockElement.querySelector('.feedback');
+            const correct = selectedOptionKey === qData.correctAnswer;
+
+            let feedbackHTML = '';
+
+            if (correct) {
+                feedbackHTML = `<span class="feedback-status">Correct!</span>`;
+                feedbackDiv.className = 'feedback correct';
+            } else {
+                 feedbackHTML = `<span class="feedback-status">Incorrect.</span> The correct answer is ${qData.correctAnswer}.`;
+                feedbackDiv.className = 'feedback incorrect';
+            }
+
+            feedbackHTML += `<div class="feedback-rationale"><strong>Rationale:</strong> ${qData.rationale}</div>`;
+            feedbackHTML += `<div class="feedback-source">${qData.source}</div>`;
+            feedbackDiv.innerHTML = feedbackHTML;
+        }
+
+        themeToggleButton.addEventListener('click', () => {
+            if (bodyElement.classList.contains('light-theme')) {
+                applyTheme('dark');
+            } else {
+                applyTheme('light');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('quizTheme') || 'dark';
+            applyTheme(savedTheme);
+            loadQuiz();
+        });
+
+    </script>
+
+</body>
+</html>```
